@@ -1,0 +1,181 @@
+body {
+    margin: 0;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    color: #000;
+}
+
+/* 全体 */
+.detail-page {
+    max-width: 1200px;
+    margin: 50px auto;
+    display: flex;
+    gap: 80px;
+    padding: 0 40px;
+}
+
+/* 左画像 */
+.detail-image img {
+    width: 550px;
+    height: 550px;
+    object-fit: cover;
+    background: #eee;
+}
+
+/* 右 */
+.detail-content {
+    flex: 1;
+}
+
+/* 商品名 */
+.item-name {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+/* ブランド */
+.brand-name {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* 価格 */
+.price {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.price span {
+    font-size: 18px;
+}
+
+/* アイコン */
+.item-icons {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.icon-box {
+    text-align: center;
+    font-size: 24px;
+}
+
+.icon-box p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* 購入ボタン */
+.purchase-btn {
+    display: block;
+
+    width: 100%;
+    height: 50px;
+
+    background: #ff5c5c;
+    color: #fff;
+
+    text-decoration: none;
+
+    text-align: center;
+    line-height: 50px;
+
+    border-radius: 5px;
+
+    margin-top: 20px;
+}
+
+/* セクション */
+.section {
+    margin-bottom: 40px;
+}
+
+.section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* カテゴリー */
+.category {
+    display: inline-block;
+    background: #eee;
+    border-radius: 20px;
+    padding: 5px 15px;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+/* コメント */
+.comment-area {
+    width: 100%;
+    height: 120px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 10px;
+    resize: none;
+}
+
+/* コメントボタン */
+.comment-btn {
+    width: 100%;
+    height: 50px;
+    background: #ff5555;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+/* ヘッダー */
+.header {
+    background: #000;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 30px;
+}
+
+/* ロゴ */
+.header img {
+    height: 35px;
+}
+
+/* 検索 */
+.search-box {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+/* 検索ボックス */
+.search-box input {
+    width: 400px;
+    height: 40px;
+
+    border: none;
+    border-radius: 5px;
+
+    padding: 0 15px;
+
+    font-size: 16px;
+}
+
+/* 出品ボタン */
+.sell-btn {
+    background: #fff;
+    color: #000;
+
+    text-decoration: none;
+
+    padding: 10px 20px;
+
+    border-radius: 5px;
+
+    font-size: 14px;
+    font-weight: bold;
+}

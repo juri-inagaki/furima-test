@@ -2,43 +2,50 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'email', 'password',
+        'profile_image', 'postal_code', 'address', 'building'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-}
+    // 出品商品
+    public function items()
+    {
+        return $this->hasMany(Item::class);
+    }
+
+    // いいね
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    // いいねした商品（重要）
+    public function likedItems()
+    {
+        return $this->belongsToMany(Item::class, 'likes');
+    }
+
+    // コメント
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    // 購入
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+}                            
