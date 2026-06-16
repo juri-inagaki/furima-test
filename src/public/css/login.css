@@ -34,7 +34,7 @@ main {
 }
 
 /* タイトル */
-.login-form__heading h2 {
+.login-form__heading h1 {
     margin-bottom: 40px;
     font-size: 24px;
     font-weight: bold;

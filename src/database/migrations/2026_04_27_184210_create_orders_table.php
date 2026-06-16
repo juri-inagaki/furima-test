@@ -13,10 +13,20 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+      Schema::create('orders', function (Blueprint $table) {
+    $table->id();
+    $table->timestamps();
+
+    $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('item_id')->constrained()->cascadeOnDelete();
+
+    $table->string('postcode')->nullable();
+    $table->string('address')->nullable();
+    $table->string('building')->nullable();
+
+    $table->string('payment_method')->nullable();
+
+    });
     }
 
     /**

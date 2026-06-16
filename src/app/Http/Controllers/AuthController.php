@@ -3,21 +3,44 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'min:8'],
-        ], [
-            'email.required' => 'メールアドレスを入力してください',
-            'email.email' => 'メールアドレスはメール形式で入力してください',
-            'password.required' => 'パスワードを入力してください',
-            'password.min' => 'パスワードは8文字以上で入力してください',
-        ]);
+    $request->validate([
+        'email' => ['required'],
+        'password' => ['required'],
+    ], [
+        'email.required' => 'メールアドレスを入力してください',
+        'password.required' => 'パスワードを入力してください',
+    ]);
 
-        return redirect('/items');
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+
+            $request->session()->regenerate();
+
+            return redirect('/items');
+
+        }
+
+        return back()->withErrors([
+            'email' => 'ログイン情報が登録されていません',
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 }

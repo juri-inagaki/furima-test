@@ -165,17 +165,62 @@ body {
     font-size: 16px;
 }
 
+
+/* ヘッダー */
+.header {
+    background: #000;
+    padding: 15px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ロゴ */
+.header img {
+    height: 35px;
+}
+
+/* 検索 */
+.search-box input {
+    width: 300px;
+    padding: 8px;
+}
+
+/* ナビ */
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* ログアウトボタン */
+.logout-btn {
+    background: none;
+    border: none;
+
+    color: #fff;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.header {
+    background: black;
+    color: white;
+}
+
 /* 出品ボタン */
 .sell-btn {
     background: #fff;
-    color: #000;
-
-    text-decoration: none;
-
-    padding: 10px 20px;
-
-    border-radius: 5px;
-
-    font-size: 14px;
-    font-weight: bold;
+    color: #000 !important;
+    padding: 5px 10px;
+    border-radius: 3px;
 }

@@ -21,17 +21,14 @@
 
     <div class="header-menu">
 
-        <a href="" class="logout-btn">
-            ログアウト
-        </a>
+        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
 
-        <a href="" class="mypage-btn">
-            マイページ
-        </a>
+        <a href="{{ route('mypage') }}" class="mypage-btn">マイページ</a>
 
-        <a href="" class="sell-btn">
-            出品
-        </a>
+        <a href="{{ route('sell') }}" class="sell-btn">出品</a>
 
     </div>
 
@@ -44,13 +41,13 @@
 
         <div class="item-box">
 
-            <img src="{{ asset('storage/items/' . $item['image']) }}" alt="">
+            <img src="{{ asset('storage/' . $item->image_path) }}" alt="商品画像">
 
             <div class="item-info">
 
-                <h2>{{ $item['name'] }}</h2>
+                <h2>{{ $item->name }}</h2>
 
-                <p>¥ {{ number_format($item['price']) }}</p>
+                <p>¥ {{ number_format($item->price) }}</p>
 
             </div>
 
@@ -61,10 +58,10 @@
 
             <h3>支払い方法</h3>
 
-            <select>
-                <option>選択してください</option>
-                <option>コンビニ払い</option>
-                <option>カード支払い</option>
+            <select name="payment_method">
+                <option value="">選択してください</option>
+                <option value="konbini">コンビニ払い</option>
+                <option value="card">カード支払い</option>
             </select>
 
         </div>
@@ -73,19 +70,16 @@
         <div class="address-box">
 
             <div class="address-header">
-
                 <h3>配送先</h3>
 
-                <a href="">変更する</a>
-
+                <a href="/purchase/address/{{ $id }}">変更する</a>
             </div>
 
-            <p>
-                〒 XXX-YYYY
-            </p>
+            <p>〒 {{ Auth::user()->postcode }}</p>
 
             <p>
-                ここには住所と建物が入ります
+                {{ Auth::user()->address }}
+                {{ Auth::user()->building }}
             </p>
 
         </div>
@@ -98,31 +92,41 @@
         <div class="summary-box">
 
             <div class="summary-row">
-
                 <p>商品代金</p>
-
-                <p>¥ {{ number_format($item['price']) }}</p>
-
+                <p>¥ {{ number_format($item->price) }}</p>
             </div>
 
             <div class="summary-row">
-
                 <p>支払い方法</p>
-
-                <p>コンビニ払い</p>
-
+                <p>選択してください</p>
             </div>
 
         </div>
 
-        <button class="buy-btn">
-            購入する
-        </button>
+        <form action="/checkout/{{ $id }}" method="POST">
+
+            @csrf
+
+            <input type="hidden" name="payment_method" id="payment_method_input">
+
+            <button class="buy-btn">
+                購入する
+            </button>
+
+        </form>
 
     </div>
 
 </div>
 
-</body>
+<script>
+const select = document.querySelector('select');
+const hidden = document.getElementById('payment_method_input');
 
+select.addEventListener('change', function () {
+    hidden.value = this.value;
+});
+</script>
+
+</body>
 </html>

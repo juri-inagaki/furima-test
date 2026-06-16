@@ -3,31 +3,184 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session as LaravelSession;
+use App\Models\Item;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Comment;
+
 
 class ItemController extends Controller
 {
-    public function index()
-    {
-        return view('index');
+   public function index(Request $request)
+{
+    $keyword = $request->keyword;
+
+    $query = Item::query();
+
+    if (!empty($keyword)) {
+        $query->where('name', 'like', '%' . $keyword . '%');
     }
 
-    public function show($id)
+    $items = $query->get();
+
+    $soldItems = Order::pluck('item_id')->toArray();
+
+    return view('index', compact('items', 'soldItems', 'keyword'));
+}
+
+public function show($id)
+{
+    $item = Item::findOrFail($id);
+
+    $likes = LaravelSession::get('likes', []);
+
+    $liked = in_array($id, $likes);
+
+    $comments = Comment::where('item_id', $id)
+        ->latest()
+        ->get();
+
+    return view('show', compact(
+        'item',
+        'id',
+        'liked',
+        'comments'
+    ));
+}
+  public function purchase($id)
+{
+    $item = Item::findOrFail($id);
+
+    return view('purchase', compact('item','id'));
+}
+
+    public function checkout(Request $request,$id)
     {
-        $items = $this->items();
+    $item = Item::findOrFail($id);
 
-        $item = $items[$id];
+    $user = Auth::user();
 
-        return view('show', compact('item', 'id'));
+    Order::create([
+    'user_id' => $user->id,
+    'item_id' => $id,
+    'postcode' => $user->postcode,
+    'address' => $user->address,
+    'building' => $user->building,
+    'payment_method' => $request->payment_method,
+    ]);
+    Stripe::setApiKey(config('services.stripe.secret'));
+
+    $checkout_session = Session::create([
+
+        'payment_method_types' => [
+            'card',
+            'konbini'
+        ],
+
+        'line_items' => [[
+            'price_data' => [
+                'currency' => 'jpy',
+
+                'product_data' => [
+                    'name' => $item['name'],
+                ],
+
+                'unit_amount' => $item['price'],
+            ],
+
+            'quantity' => 1,
+        ]],
+
+        'mode' => 'payment',
+
+        'success_url' => url('/'),
+
+        'cancel_url' => url('/purchase/' . $id),
+    ]);
+
+    return redirect($checkout_session->url);
     }
 
-    public function purchase($id)
-    {
-        $items = $this->items();
+    public function sell()
+    
+{
+    return view('sell');
+}
 
-        $item = $items[$id];
+public function store(Request $request)
+{
+    $file = $request->file('image');
 
-        return view('purchase', compact('item'));
+    $filename = $file->getClientOriginalName();
+
+    $file->storeAs('items', $filename, 'public');
+
+    Item::create([
+        'name' => $request->name,
+        'price' => $request->price,
+        'brand_name' => $request->brand_name,
+        'description' => $request->description,
+        'condition_id' => $request->condition_id,
+        'image_path' => 'items/' . $filename, // ←ここを統一
+        'user_id' => auth()->id(),
+    ]);
+
+    return redirect('/items');
+}
+
+public function mypage()
+{
+    $user = Auth::user();
+
+    return view('mypage', compact('user'));
+}
+
+public function like($id)
+{
+    $likes = LaravelSession::get('likes', []);
+
+    if (in_array($id, $likes)) {
+        $likes = array_diff($likes, [$id]);
+    } else {
+        $likes[] = $id;
     }
+
+    LaravelSession::put('likes', $likes);
+
+    return back();
+}
+public function mylist(Request $request)
+{
+    $keyword = $request->keyword;
+
+    $likes = LaravelSession::get('likes', []);
+
+    $query = Item::whereIn('id', $likes);
+
+    if (!empty($keyword)) {
+        $query->where('name', 'like', '%' . $keyword . '%');
+    }
+
+    $items = $query->get();
+
+    return view('mylist', compact('items', 'keyword'));
+}
+
+public function comment(Request $request, $id)
+{
+    Comment::create([
+        'user_id' => auth()->id(),
+        'item_id' => $id,
+        'comment' => $request->comment,
+    ]);
+
+    return back();
+}
+
 
     private function items()
     {
